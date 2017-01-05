@@ -2,8 +2,8 @@
 
 import random
 
-TURNS = 1000000
-NUM_SQUARES = 36
+TURNS = 10000000
+NUM_SQUARES = 40 
 GO_TO_JAIL = 27
 JAIL = 9
 ROWS = 4
@@ -27,7 +27,7 @@ ss = spaces_strings
 def simple():
     # for now, each space is represented as an integer 0 to 36
     print('----------------- begin ------------------') 
-    freq = [0 for _ in range(36)]
+    freq = [0 for _ in range(NUM_SQUARES)]
     jail_counts = []
 
     def roll():
@@ -106,12 +106,23 @@ def simple():
     def display_freq():
         print('///////////////////////////')
         for row in range(ROWS):
-            for i in range(len(freq)//ROWS):
-                print(ss[i + row*PER_ROW], '|||', freq[i + row*PER_ROW])
+            for i in range(10):
+                print(ss[i + row*10], '|||', freq[i + row*10])
             print('.............')
         print('///////////////////////////')
 
     display_freq()
+
+    # sort by frequency
+    pairs = []
+    for i in range(NUM_SQUARES):
+        pair = (ss[i], freq[i])
+        pairs += [pair]
+    pairs.sort(key=lambda x: x[1])
+    for pair in pairs:
+        print(pair[0], '|||', pair[1])
+
+
     import pdb; pdb.set_trace()
 
 
