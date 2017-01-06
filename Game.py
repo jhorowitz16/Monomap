@@ -1,18 +1,26 @@
 # Simplified game logic to model Monopoly space distributions
 
 import random
+from Card import Card
 
-TURNS = 10000000
+TURNS = 10
 NUM_SQUARES = 40 
 GO_TO_JAIL = 27
 JAIL = 9
 ROWS = 4
 PER_ROW = 9
 
+# spaces
+GO_SPACE = 0
+JAIL_SPACE = 9
+CC_SPACES = [2, 17, 33]
+CH_SPACES = [7, 22, 36]
+
+
 
 # debugging
 ROLL_DEBUG = False 
-MOVE_DEBUG = False 
+MOVE_DEBUG = True 
 COUNT_DEBUG = False
 END_TURN_DEBUG = False 
 
@@ -21,6 +29,9 @@ spaces_strings = \
 'JAL', 'SCP', 'ECO', 'STA', 'VIR', 'RR2', 'STJ', 'CC2', 'TEN', '.NY',
 'FPK', 'KEN', 'CH3', 'IND', 'ILL', 'RR3', 'ATL', 'VEN', '.WW', 'MAR',
 'GTJ', 'PAC', 'NCA', 'CC4', 'PEN', 'RR4', 'CH4', 'PPL', 'LTX', 'BWK']
+
+for i in CC_SPACES + CH_SPACES:
+    print (spaces_strings[i])
 
 ss = spaces_strings
 
@@ -75,6 +86,11 @@ def simple():
             return True
 
         # pending: deal with cards that can end a turn
+        if player_pos in CC_SPACES:
+            debug("+CC+ " + str(player_pos), MOVE_DEBUG)
+
+        elif player_pos in CH_SPACES:
+            debug("+CH+ " + str(player_pos), MOVE_DEBUG)
 
         # normal roll - update the frequency of the square
         freq[player_pos] += 1
@@ -125,9 +141,55 @@ def simple():
 
     import pdb; pdb.set_trace()
 
+def build_cc_deck():
+    """ 
+    for now - hard coding the cards that matter, plus blank cards (collect)
 
+    """
+    # community chest is Go, Jail, then money
+    CC_Deck = []
+    for i in range(16):
+        c = Card('CC', 'COL', i, 0, 0, str(i))
+        CC_Deck.append(c) 
+    go = Card('CC', 'MOV', 0, GO_SPACE, 0, "go to go")
+    jail = Card('CC', 'MOV', 0, JAIL_SPACE, 0, "go to jail")
+    CC_Deck += [go, jail]
+    print_deck(CC_Deck)
+    return CC_Deck
+    
+
+def build_ch_deck():
+    """ 
+    for now - hard coding the cards that matter, plus blank cards (collect)
+
+    """
+    # community chest is Go, Jail, then money
+    CH_Deck = []
+    for i in range(16):
+        c = Card('CH', 'COL', i, 0, 0, str(i))
+        CH_Deck.append(c) 
+    go = Card('CH', 'MOV', 0, GO_SPACE, 0, "go to go")
+    jail = Card('CH', 'MOV', 0, JAIL_SPACE, 0, "go to jail")
+    CH_Deck += [go, jail]
+    print_deck(CH_Deck)
+    random.shuffle(CH_Deck)
+    print_deck(CH_Deck)
+    return CH_Deck
+
+
+
+# utils
 def debug(s, b):
     if b:
         print (s)
         
+def print_deck(deck):
+    print('-------')
+    for c in deck:
+        print(c)
+    print('-------')
+
+
 simple()
+cc_deck = build_cc_deck()
+ch_deck = build_ch_deck()
