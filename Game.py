@@ -3,7 +3,7 @@
 import random
 from Card import Card
 
-TURNS = 10
+TURNS = 1000
 NUM_SQUARES = 40 
 GO_TO_JAIL = 27
 JAIL = 9
@@ -16,6 +16,9 @@ JAIL_SPACE = 9
 CC_SPACES = [2, 17, 33]
 CH_SPACES = [7, 22, 36]
 
+# strings
+CH = 'CH'
+CC = 'CC'
 
 
 # debugging
@@ -89,6 +92,8 @@ def simple():
         if player_pos in CC_SPACES:
             debug("+CC+ " + str(player_pos), MOVE_DEBUG)
 
+
+
         elif player_pos in CH_SPACES:
             debug("+CH+ " + str(player_pos), MOVE_DEBUG)
 
@@ -139,11 +144,11 @@ def simple():
         print(pair[0], '|||', pair[1])
 
 
-    import pdb; pdb.set_trace()
 
 def build_cc_deck():
     """ 
     for now - hard coding the cards that matter, plus blank cards (collect)
+    one global community chest deck for the whole simulation
 
     """
     # community chest is Go, Jail, then money
@@ -161,6 +166,7 @@ def build_cc_deck():
 def build_ch_deck():
     """ 
     for now - hard coding the cards that matter, plus blank cards (collect)
+    one global chance deck for the whole simulation
 
     """
     # community chest is Go, Jail, then money
@@ -175,6 +181,17 @@ def build_ch_deck():
     random.shuffle(CH_Deck)
     print_deck(CH_Deck)
     return CH_Deck
+
+
+def draw_card(deck):
+    """
+    pop the top card from the deck, move it to the bottom, and return
+    """
+    card = deck.pop()
+    print(deck)
+    deck.append(card)
+    print(deck)
+    return (card, deck[1:])
 
 
 
@@ -193,3 +210,8 @@ def print_deck(deck):
 simple()
 cc_deck = build_cc_deck()
 ch_deck = build_ch_deck()
+import pdb; pdb.set_trace()
+lol, ch_deck = draw_card(ch_deck)
+import pdb; pdb.set_trace()
+loll, ch_deck = draw_card(ch_deck)
+import pdb; pdb.set_trace()
