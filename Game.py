@@ -2,6 +2,7 @@
 
 import random
 from Card import Card
+from Deck import Deck
 random.seed(0)
 
 TURNS = 100
@@ -40,15 +41,14 @@ for i in CC_SPACES + CH_SPACES:
 
 ss = spaces_strings
 
+
+
 def simple():
     # for now, each space is represented as an integer 0 to 36
     print('----------------- begin ------------------') 
     freq = [0 for _ in range(NUM_SQUARES)]
 
-    # initialize the two decks and the player at Go
-    cc_deck = build_cc_deck()
-    ch_deck = build_ch_deck()
-    decks = [cc_deck, ch_deck]
+    # initialize the player at Go
     player_pos = GO_SPACE 
 
     def roll():
@@ -63,17 +63,13 @@ def simple():
     
 
 
-    def move(count, decks):
+    def move(count):
         """
         count refers to turn number
         don't move if count is 3 and roll returns a double
         roll the dice, and update player position
         update frequency table
         """
-        
-        # pass the decks into the function
-        cc_deck = decks[0]
-        ch_deck = decks[1]
 
         debug(">>> " + str(count), COUNT_DEBUG)
 
@@ -85,7 +81,7 @@ def simple():
             debug("go to jail from 3 doubles", MOVE_DEBUG)
             player_pos = JAIL
             freq[player_pos] += 1
-            return (True, decks)
+            return True
 
         player_pos = (player_pos + r[0]) % NUM_SQUARES 
 
@@ -96,18 +92,18 @@ def simple():
             freq[player_pos] += 1
             player_pos = JAIL
             debug("go to jail " + str(ss[player_pos]), MOVE_DEBUG)
-            return (True, decks)
+            return True
 
         # pending: deal with cards that can end a turn
         if player_pos in CC_SPACES:
             debug(str(ss[player_pos]), MOVE_DEBUG)
-            card, cc_deck = draw_card(cc_deck)
+            card = cc_deck.draw()
             debug("community chest card " + str(card), MOVE_DEBUG)
 
 
         elif player_pos in CH_SPACES:
             debug(str(ss[player_pos]), MOVE_DEBUG)
-            card, ch_deck = draw_card(ch_deck)
+            card = ch_deck.draw()
             debug("chance card " + str(card), MOVE_DEBUG)
             
 
@@ -116,10 +112,10 @@ def simple():
 
         debug("successful move to " + str(ss[player_pos]), MOVE_DEBUG)
         # continue when double
-        return (not r[1], decks)
+        return not r[1]
 
 
-    def turn(decks):
+    def turn():
         """
         take a single player turn - updating positions, ignoring effects
         cap at three "moves"
@@ -129,13 +125,12 @@ def simple():
         end = False
         while not end:
             count += 1
-            end, decks = move(count, decks)
+            end = move(count)
         debug("\n---------- ", END_TURN_DEBUG)
-        return decks
 
 
     for _ in range(TURNS):
-        decks = turn(decks)
+        turn()
 
     def display_freq():
         print('///////////////////////////')
@@ -156,7 +151,6 @@ def simple():
     for pair in pairs:
         print(pair[0], '|||', pair[1])
 
-    [print_deck(d) for d in decks]
 
 
 
@@ -175,9 +169,9 @@ def build_cc_deck():
     jail = Card('CC', 'MOV', 0, JAIL_SPACE, 0, "go to jail")
     CC_Deck += [go, jail]
     random.shuffle(CC_Deck)
+    CC_Deck = Deck(CC_Deck)
     if DECK_DEBUG:
-        print_deck(CC_Deck)
-
+        CC_Deck.print_deck()
     return CC_Deck
     
 
@@ -196,8 +190,9 @@ def build_ch_deck():
     jail = Card('CH', 'MOV', 0, JAIL_SPACE, 0, "go to jail")
     CH_Deck += [go, jail]
     random.shuffle(CH_Deck)
+    CH_Deck = Deck(CH_Deck)
     if DECK_DEBUG:
-        print_deck(CH_Deck)
+        CH_Deck.print_deck()
     return CH_Deck
 
 
@@ -214,11 +209,10 @@ def debug(s, b):
     if b:
         print (s)
         
-def print_deck(deck):
-    print('-------')
-    for c in deck:
-        print(c)
-    print('-------')
 
+cc_deck = build_cc_deck()
+print(cc_deck)
+ch_deck = build_ch_deck()
 
 simple()
+print(cc_deck)
