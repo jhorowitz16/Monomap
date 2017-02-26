@@ -12,7 +12,7 @@ class Card:
     MOV = 'MOV'
     e_types = [MOV, COL]
 
-    def __init__(self, card_type=CC, effect_type=COL, money=0, abs_dist=0, 
+    def __init__(self, card_type=CC, effect_type=COL, money=0, abs_dist=None, 
             rel_dist=0, text='UNDEF'):
         """
         card_type: chance or community chest
