@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Simplified game logic to model Monopoly space distributions
 
 import random
@@ -8,7 +9,7 @@ from datetime import datetime
 SEED = random.randint(0, 100000)
 random.seed(SEED)
 
-TURNS = 10000000
+TURNS = 1000000
 NUM_SQUARES = 40 
 GO_TO_JAIL = 30 
 JAIL = 10 
@@ -42,6 +43,7 @@ END_TURN_DEBUG = False
 DECK_DEBUG = False 
 PDB_DEBUG = False
 DOUBLES_DEBUG = False
+MINPRINT_DEBUG = False
 
 ALL_OFF = 0 
 if ALL_OFF == 1:
@@ -52,6 +54,7 @@ if ALL_OFF == 1:
     DECK_DEBUG = False 
     PDB_DEBUG = False
     DOUBLES_DEBUG = False 
+    MINPRINT_DEBUG = False
 elif ALL_OFF == 2:
     ROLL_DEBUG = True
     MOVE_DEBUG = True 
@@ -60,6 +63,7 @@ elif ALL_OFF == 2:
     DECK_DEBUG = True 
     PDB_DEBUG = True
     DOUBLES_DEBUG = True
+    MINPRINT_DEBUG = True 
 
 # relative position placeholders
 UTIL_REL = 2
@@ -76,8 +80,9 @@ ss = spaces_strings
 
 def simple():
     # for now, each space is represented as an integer 0 to 36
-    print('----------------- begin ------------------') 
-    print("running", str(TURNS), "turns with seed", str(SEED))
+    if MINPRINT_DEBUG:
+        print('----------------- begin ------------------') 
+        print("running", str(TURNS), "turns with seed", str(SEED))
     freq = [0 for _ in range(NUM_SQUARES)]
 
     # initialize the player at Go
@@ -230,8 +235,9 @@ def simple():
     for pair in pairs:
         # print(pair[0], '|||', pair[1])
         f.write(str(pair[0]) + ' ||| ' + str(pair[1]) + "\r\n")
-    print("chance draws: " + str(ch_draws))
-    print("community chest draws: " + str(cc_draws))
+    if MINPRINT_DEBUG:
+        print("chance draws: " + str(ch_draws))
+        print("community chest draws: " + str(cc_draws))
     if PDB_DEBUG:
         import pdb; pdb.set_trace()
 
