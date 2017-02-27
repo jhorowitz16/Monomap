@@ -1,11 +1,14 @@
 # Simplified game logic to model Monopoly space distributions
 
 import random
+import os
 from Card import Card
 from Deck import Deck
-random.seed(0)
+from datetime import datetime
+SEED = random.randint(0, 100000)
+random.seed(SEED)
 
-TURNS = 1000000
+TURNS = 10000000
 NUM_SQUARES = 40 
 GO_TO_JAIL = 30 
 JAIL = 10 
@@ -27,7 +30,6 @@ BOARDW_SPACE = 39
 CC_SPACES = [2, 17, 33]
 CH_SPACES = [7, 22, 36]
 
-
 # strings
 CH = 'CH'
 CC = 'CC'
@@ -39,8 +41,9 @@ COUNT_DEBUG = False
 END_TURN_DEBUG = False 
 DECK_DEBUG = False 
 PDB_DEBUG = False
+DOUBLES_DEBUG = False
 
-ALL_OFF = 1 
+ALL_OFF = 0 
 if ALL_OFF == 1:
     ROLL_DEBUG = False
     MOVE_DEBUG = False 
@@ -48,6 +51,7 @@ if ALL_OFF == 1:
     END_TURN_DEBUG = False 
     DECK_DEBUG = False 
     PDB_DEBUG = False
+    DOUBLES_DEBUG = False 
 elif ALL_OFF == 2:
     ROLL_DEBUG = True
     MOVE_DEBUG = True 
@@ -55,6 +59,7 @@ elif ALL_OFF == 2:
     END_TURN_DEBUG = True 
     DECK_DEBUG = True 
     PDB_DEBUG = True
+    DOUBLES_DEBUG = True
 
 # relative position placeholders
 UTIL_REL = 2
@@ -67,16 +72,12 @@ spaces_strings = \
 'FPK', 'KEN', 'CH3', 'IND', 'ILL', 'RR3', 'ATL', 'VEN', '.WW', 'MAR',
 'GTJ', 'PAC', 'NCA', 'CC4', 'PEN', 'RR4', 'CH4', 'PPL', 'LTX', 'BWK']
 
-for i in CC_SPACES + CH_SPACES:
-    print (spaces_strings[i])
-
 ss = spaces_strings
-
-
 
 def simple():
     # for now, each space is represented as an integer 0 to 36
     print('----------------- begin ------------------') 
+    print("running", str(TURNS), "turns with seed", str(SEED))
     freq = [0 for _ in range(NUM_SQUARES)]
 
     # initialize the player at Go
@@ -95,8 +96,6 @@ def simple():
         debug(result, ROLL_DEBUG)
         return (sum(result), result[0] == result[1])
     
-
-
     def move(count):
         """
         count refers to turn number
@@ -113,6 +112,8 @@ def simple():
         if r[1] and count == 3:
             # don't make the move...
             debug("go to jail from 3 doubles", MOVE_DEBUG)
+            if DOUBLES_DEBUG:
+                import pdb; pdb.set_trace()
             player_pos = JAIL
             freq[player_pos] += 1
             return True
@@ -174,9 +175,7 @@ def simple():
                             player_pos = WW_SPACE
                         
             ch_draws += 1
-
             debug("chance card " + str(card), MOVE_DEBUG)
-            
 
         # normal roll - update the frequency of the square
         freq[player_pos] += 1
@@ -184,7 +183,6 @@ def simple():
         debug("successful move to " + str(ss[player_pos]), MOVE_DEBUG)
         # continue when double
         return not r[1]
-
 
     def turn():
         """
@@ -194,13 +192,13 @@ def simple():
         """
         count = 0  # turn counter
         end = False
+        nonlocal freq
         while not end:
             count += 1
             end = move(count)
         debug("\n---------- ", END_TURN_DEBUG)
         if PDB_DEBUG:
-            import pdb; pdb.set_trace()
-
+            import pdb; pdb.set_trace()  # for turn by turn debugging
 
     count = 1 
     for _ in range(TURNS):
@@ -217,19 +215,25 @@ def simple():
             print('.............')
         print('///////////////////////////')
 
-    display_freq()
-
-    # sort by frequency
+    # sort by frequency and print to file
+    # every file different by current time in millionths of seconds
+    date_str = str(datetime.now())
+    unique_num = str(date_str.split('.')[-1])
+    filename = "trials/results" + "_" + str(SEED) + "_" + unique_num + ".txt"
+    f = open(filename, 'w')
+    f.write("seed: " + str(SEED) + "\r\n")
     pairs = []
     for i in range(NUM_SQUARES):
         pair = (ss[i], freq[i])
         pairs += [pair]
     pairs.sort(key=lambda x: x[1])
     for pair in pairs:
-        print(pair[0], '|||', pair[1])
+        # print(pair[0], '|||', pair[1])
+        f.write(str(pair[0]) + ' ||| ' + str(pair[1]) + "\r\n")
     print("chance draws: " + str(ch_draws))
     print("community chest draws: " + str(cc_draws))
-    import pdb; pdb.set_trace()
+    if PDB_DEBUG:
+        import pdb; pdb.set_trace()
 
 
 def build_cc_deck():
@@ -288,17 +292,11 @@ def draw_card(deck):
     """
     return (deck[0], deck[1:] + [deck[0]])
 
-
-
 # utils
 def debug(s, b):
     if b:
         print (s)
-        
 
 cc_deck = build_cc_deck()
-print(cc_deck)
 ch_deck = build_ch_deck()
-
 simple()
-print(cc_deck)
