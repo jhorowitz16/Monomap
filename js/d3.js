@@ -16,4 +16,6 @@ vis.selectAll("circle.nodes")
    .attr("cy", function(d) { return d.y; })
    .attr("r", "10px")
    .attr("fill", "black")
-    
+
+$(".board").append("<p>Test</p>");
+console.log("test");
