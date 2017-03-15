@@ -1,11 +1,12 @@
 <head>
   <link href="css/style.css" rel="stylesheet" />
   <script type="text/javascript" src="d3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script type="text/javascript" src="js/circles.js"></script>
 </head>
 
-<body background="images/monopoly-board.jpg">
-
-
+<body>
+  <div id="background"></div>
   <div id="graph">
     <p>TEST</p>
     <svg width="50" height="50">
@@ -15,6 +16,29 @@
 
   <div class="board">
   </div>
+
+  <table style="width:100%">
+    <tr>
+      <th>
+        <svg width="50" height="50">
+          <circle cx="25" cy="25" r="25" fill="purple" />
+        </svg>
+      </th>
+
+      <th>Lastname</th> 
+      <th>Age</th>
+    </tr>
+    <tr>
+      <td>Jill</td>
+      <td>Smith</td> 
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>Eve</td>
+      <td>Jackson</td> 
+      <td>94</td>
+    </tr>
+  </table>
 
 </body>
 
