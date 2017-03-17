@@ -226,12 +226,12 @@ def simple():
     unique_num = str(date_str.split('.')[-1])
     filename = "trials/results" + "_" + str(SEED) + "_" + unique_num + ".txt"
     f = open(filename, 'w')
-    f.write("seed: " + str(SEED) + "\r\n")
+    f.write("seed: " + str(SEED) + ", turns:" + str(TURNS) + "\r\n")
     pairs = []
     for i in range(NUM_SQUARES):
         pair = (ss[i], freq[i])
         pairs += [pair]
-    pairs.sort(key=lambda x: x[1])
+    # pairs.sort(key=lambda x: x[1])
     for pair in pairs:
         # print(pair[0], '|||', pair[1])
         f.write(str(pair[0]) + ' ||| ' + str(pair[1]) + "\r\n")
